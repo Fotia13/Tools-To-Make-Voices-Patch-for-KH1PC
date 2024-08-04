@@ -1,0 +1,2 @@
+You can update ffmpeg, KHPCPatchManager, MultiEncoder, the resources and the tools if you want but it shouldn't be needed.
+Python is needed. (www.python.org/downloads)
