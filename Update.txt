@@ -1,5 +1,0 @@
-You can update ffmpeg, KHPCPatchManager, MultiEncoder, the resources and the tools if you want but it shouldn't be needed.
-Python is needed. (https://www.python.org/downloads)
-https://ffmpeg.org/download.html
-https://github.com/AntonioDePau/KHPCPatchManager/releases/latest
-https://github.com/Leinxad/KHPCSoundTools/releases/latest
