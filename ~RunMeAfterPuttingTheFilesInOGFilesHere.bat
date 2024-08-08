@@ -28,18 +28,42 @@ if errorlevel 1 (
 if not exist "OGFilesHere\xs_mushu.dat" (if not exist "OGFilesHere\xa_ex_1010.mdls" (if not exist "OGFilesHere\tz_001.vset" (if not exist "OGFilesHere\tarzan.vsb" (echo Kingdom Hearts 1 files aren't detected, the script will continue until the 4th action so after hex edit.))))
 
 
-REM First action: Normalize every volume with ffmpeg
-for /D %%f in (OGFilesHere/*) do (
-	if not exist "input\%%f" (
-		mkdir "input\%%f"
-    )
-	echo Normalizing %%f
-	for %%w in ("OGFilesHere/%%f/*.wav") do (
-		ffmpeg-normalize "OGFilesHere/%%f/%%w" -nt peak -t -0.12 -o "input/%%f/%%w"
-	)
-	copy "OGFilesHere\%%f\*.scd" "input\%%f\."
+REM First action: Amplify by a percentage and an amount every volume with ffmpeg
+if not exist "CalcsWithDecimals.py" (
+    echo CalcsWithDecimals.py doesn't exist, recreating it...
+    (
+		echo import argparse
+		echo.
+		echo parser = argparse.ArgumentParser^(^)
+		echo parser.add_argument^('x', type=float^)
+		echo args = parser.parse_args^(^)
+		echo.
+		echo print^(round^(-args.x/1.2+0.25,3^)^)
+	) > CalcsWithDecimals.py
 )
-echo Every files is now normalized switching to the packing!
+for /D %%f in (OGFilesHere\*) do (
+    if not exist "input\%%~nxf" (
+        mkdir "input\%%~nxf"
+    )
+    
+    echo %%~nxf|findstr /i /L ".vset" > nul
+    if errorlevel 1 (
+        echo %%~nxf isn't a .vset so it's just copied.
+        copy "OGFilesHere\%%~nxf\*" "input\%%~nxf\"
+    ) else (
+        for %%w in (OGFilesHere\%%~nxf\*.wav) do (
+			REM this command is only precise by 1 number after the dot so the difference due to this inacurracy can be heard ingame.
+            for /f "tokens=5" %%b in ('ffmpeg.exe -i "%%w" -af volumedetect -f null NUL 2^>^&1 ^| findstr /c:"max_volume"') do (
+                for /f %%u in ('CalcsWithDecimals.py %%b') do (
+					echo %%~nxf/%%~nxw is a .vset, getting amplified by %%udB!
+					ffmpeg.exe -i "%%w" -filter:a "volume=%%udB" "input\%%~nxf\%%~nxxw"
+				)
+            )
+        )
+        copy "OGFilesHere\%%~nxf\*.scd" "input\%%~nxf\"
+    )
+)
+echo Every files is now amplified switching to the packing!
 
 
 REM Second action: Pack every wav files into scd files that the game use
@@ -685,7 +709,6 @@ if not exist "MyPatch" (
 move output\kh1_fifth MyPatch
 move output\kh1_first MyPatch
 move output\kh1_fourth MyPatch
-move output\kh1_second MyPatch
 move output\kh1_third MyPatch
 rmdir /Q /S output
 
