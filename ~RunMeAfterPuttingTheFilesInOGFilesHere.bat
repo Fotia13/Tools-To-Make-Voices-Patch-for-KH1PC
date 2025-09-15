@@ -27,6 +27,9 @@ if errorlevel 1 (
 )
 if not exist "OGFilesHere\xs_mushu.dat" (if not exist "OGFilesHere\xa_ex_1010.mdls" (if not exist "OGFilesHere\tz_001.vset" (if not exist "OGFilesHere\tarzan.vsb" (echo Kingdom Hearts 1 files aren't detected, the script will continue until the 4th action so after hex edit.))))
 
+REM Ask if user want an extreme version which put 3.40282346638529E38% instead of 100% and .wav goes to max volume
+set /p extreme=Enter 1 if you want extreme values for the max volume (doesn't change that much but for me 3.40282346638529E38%% is higher than 100%% no mixing is kept everything is max) if else put anything else:
+
 
 REM First action: Amplify by a percentage and an amount every volume with ffmpeg
 if not exist "CalcsWithDecimals.py" (
@@ -41,27 +44,50 @@ if not exist "CalcsWithDecimals.py" (
 		echo print^(round^(-args.x/1.2+0.25,3^)^)
 	) > CalcsWithDecimals.py
 )
-for /D %%f in (OGFilesHere\*) do (
-    if not exist "input\%%~nxf" (
-        mkdir "input\%%~nxf"
-    )
-    
-    echo %%~nxf|findstr /i /L ".vset" > nul
-    if errorlevel 1 (
-        echo %%~nxf isn't a .vset so it's just copied.
-        copy "OGFilesHere\%%~nxf\*" "input\%%~nxf\"
-    ) else (
-        for %%w in (OGFilesHere\%%~nxf\*.wav) do (
-			REM this command is only precise by 1 number after the dot so the difference due to this inacurracy can be heard ingame.
-            for /f "tokens=5" %%b in ('ffmpeg.exe -i "%%w" -af volumedetect -f null NUL 2^>^&1 ^| findstr /c:"max_volume"') do (
-                for /f %%u in ('CalcsWithDecimals.py %%b') do (
-					echo %%~nxf/%%~nxw is a .vset, getting amplified by %%udB!
-					ffmpeg.exe -i "%%w" -filter:a "volume=%%udB" "input\%%~nxf\%%~nxxw"
+if %extreme%==1 (
+	for /D %%f in (OGFilesHere\*) do (
+		if not exist "input\%%~nxf" (
+			mkdir "input\%%~nxf"
+		)
+		
+		echo %%~nxf|findstr /i /L ".vset" > nul
+		if errorlevel 1 (
+			echo %%~nxf isn't a .vset so it's just copied.
+			copy "OGFilesHere\%%~nxf\*" "input\%%~nxf\"
+		) else (
+			for %%w in (OGFilesHere\%%~nxf\*.wav) do (
+				REM this command is only precise by 1 number after the dot so the difference due to this inacurracy can be heard ingame.
+				for /f "tokens=5" %%b in ('ffmpeg.exe -i "%%w" -af volumedetect -f null NUL 2^>^&1 ^| findstr /c:"max_volume"') do (
+					echo %%~nxf/%%~nxw is a .vset, getting amplified by 8dB! eXtreme!
+					ffmpeg.exe -i "%%w" -filter:a "volume=8dB" "input\%%~nxf\%%~nxxw"
 				)
-            )
-        )
-        copy "OGFilesHere\%%~nxf\*.scd" "input\%%~nxf\"
-    )
+			)
+			copy "OGFilesHere\%%~nxf\*.scd" "input\%%~nxf\"
+		)
+	)
+) else (
+	for /D %%f in (OGFilesHere\*) do (
+		if not exist "input\%%~nxf" (
+			mkdir "input\%%~nxf"
+		)
+		
+		echo %%~nxf|findstr /i /L ".vset" > nul
+		if errorlevel 1 (
+			echo %%~nxf isn't a .vset so it's just copied.
+			copy "OGFilesHere\%%~nxf\*" "input\%%~nxf\"
+		) else (
+			for %%w in (OGFilesHere\%%~nxf\*.wav) do (
+				REM this command is only precise by 1 number after the dot so the difference due to this inacurracy can be heard ingame.
+				for /f "tokens=5" %%b in ('ffmpeg.exe -i "%%w" -af volumedetect -f null NUL 2^>^&1 ^| findstr /c:"max_volume"') do (
+					for /f %%u in ('CalcsWithDecimals.py %%b') do (
+						echo %%~nxf/%%~nxw is a .vset, getting amplified by %%udB!
+						ffmpeg.exe -i "%%w" -filter:a "volume=%%udB" "input\%%~nxf\%%~nxxw"
+					)
+				)
+			)
+			copy "OGFilesHere\%%~nxf\*.scd" "input\%%~nxf\"
+		)
+	)
 )
 echo Every files is now amplified switching to the packing!
 
@@ -160,10 +186,79 @@ if not exist "HexEditVolumeToMax.py" (
         echo     process_file^(args.filename^)
     ) > HexEditVolumeToMax.py
 )
-for /D %%f in (output/*) do (
-	for %%s in ("output/%%f/*.scd") do (
-		echo Editing %%f\%%s
-		HexEditVolumeToMax.py output\%%f\%%s
+if not exist "XtremHexEditVolumeToMax.py" (
+    echo XtremHexEditVolumeToMax.py doesn't exist, recreating it...
+    (
+        echo # ChatGPT is good, ChatGPT is all-powerful, ChatGPT is benevolent, glory to ChatGPT
+        echo import struct
+        echo import argparse
+        echo.
+        echo def process_file^(filename^):
+        echo     with open^(filename, 'rb+'^) as f:
+        echo         data = f.read^(^)
+        echo.
+        echo         # Search for the sequence D0 07 D0 07
+        echo         sequence = b'\xD0\x07\xD0\x07'
+        echo         offset = 0
+        echo.
+        echo         while True:
+        echo             index = data.find^(sequence, offset^)
+        echo.
+        echo             if index ^==-1:
+        echo                 break
+        echo.
+        echo             # Retrieve 4 bytes after 16 bytes from the index of the found sequence
+        echo             target_index = index + len^(sequence^) + 16
+        echo             v0_bytes = data[target_index:target_index + 4]
+        echo.
+        echo             # If there is a line of 00, it changes to the line after where the sequence is
+        echo             if v0_bytes ^== b'\x00\x00\x00\x00':
+        echo                 target_index = index + len^(sequence^) + 32
+        echo                 v0_bytes = data[target_index:target_index + 4]
+        echo.
+        echo             if len^(v0_bytes^) ^< 4:
+        echo                 print^("Not enough data after the sequence."^)
+        echo                 break
+        echo.
+        echo             # Fallback if the volume isn't found
+        echo             if v0_bytes ^== b'\x00\x00\x00\x00':
+        echo                 print^("The data found after the sequence is wrong."^)
+        echo                 break
+        echo.
+        echo             # Create the maximum value
+        echo             new_v0_bytes = b'\xFF\xFF\x7F\x7F'
+        echo             print^(f"New value in big endian: {new_v0_bytes}"^)
+        echo.
+        echo             # Replace the value in the file
+        echo             f.seek^(target_index^)
+        echo             f.write^(new_v0_bytes^)
+        echo.
+        echo             # Update the offset to continue searching after the current position
+        echo             offset = target_index + 4
+        echo.
+        echo         print^("Update completed."^)
+        echo.
+        echo if __name__ ^== "__main__":
+        echo     parser = argparse.ArgumentParser^(description='Process a binary file.'^)
+        echo     parser.add_argument^('filename', type=str, help='Name of the file to process'^)
+        echo.
+        echo     args = parser.parse_args^(^)
+        echo     process_file^(args.filename^)
+    ) > XtremHexEditVolumeToMax.py
+)
+if %extreme%==1 (
+	for /D %%f in (output/*) do (
+		for %%s in ("output/%%f/*.scd") do (
+			echo Editing %%f\%%s
+			XtremHexEditVolumeToMax.py output\%%f\%%s
+		)
+	)
+) else (
+	for /D %%f in (output/*) do (
+		for %%s in ("output/%%f/*.scd") do (
+			echo Editing %%f\%%s
+			HexEditVolumeToMax.py output\%%f\%%s
+		)
 	)
 )
 echo Every files is now hex edited to be the highest possible volume, the volume cannot be higher without clipping!
