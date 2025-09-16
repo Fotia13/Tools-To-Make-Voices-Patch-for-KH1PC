@@ -28,7 +28,7 @@ if errorlevel 1 (
 if not exist "OGFilesHere\xs_mushu.dat" (if not exist "OGFilesHere\xa_ex_1010.mdls" (if not exist "OGFilesHere\tz_001.vset" (if not exist "OGFilesHere\tarzan.vsb" (echo Kingdom Hearts 1 files aren't detected, the script will continue until the 4th action so after hex edit.))))
 
 REM Ask if user want an extreme version which put 3.40282346638529E38% instead of 100% and .wav goes to max volume
-set /p extreme=Enter 1 if you want extreme values for the max volume (doesn't change that much but for me 3.40282346638529E38%% is higher than 100%% no mixing is kept everything is max) if else put anything else:
+set /p extreme=Enter 1 if you want extreme values for the max volume (doesn't change that much but for me 3.40282346638529E38%% is higher than 100%%) and cutscenes get +8dB if else put anything else:
 
 
 REM First action: Amplify by a percentage and an amount every volume with ffmpeg
