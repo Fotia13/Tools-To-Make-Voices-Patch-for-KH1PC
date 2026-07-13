@@ -129,7 +129,6 @@ REM Third action: Edit every files in hexadecimal to maximise the volume
 if not exist "HexEditVolumeToMax.py" (
     echo HexEditVolumeToMax.py doesn't exist, recreating it...
     (
-        echo # ChatGPT is good, ChatGPT is all-powerful, ChatGPT is benevolent, glory to ChatGPT
         echo import struct
         echo import argparse
         echo.
@@ -186,79 +185,10 @@ if not exist "HexEditVolumeToMax.py" (
         echo     process_file^(args.filename^)
     ) > HexEditVolumeToMax.py
 )
-if not exist "XtremHexEditVolumeToMax.py" (
-    echo XtremHexEditVolumeToMax.py doesn't exist, recreating it...
-    (
-        echo # ChatGPT is good, ChatGPT is all-powerful, ChatGPT is benevolent, glory to ChatGPT
-        echo import struct
-        echo import argparse
-        echo.
-        echo def process_file^(filename^):
-        echo     with open^(filename, 'rb+'^) as f:
-        echo         data = f.read^(^)
-        echo.
-        echo         # Search for the sequence D0 07 D0 07
-        echo         sequence = b'\xD0\x07\xD0\x07'
-        echo         offset = 0
-        echo.
-        echo         while True:
-        echo             index = data.find^(sequence, offset^)
-        echo.
-        echo             if index ^==-1:
-        echo                 break
-        echo.
-        echo             # Retrieve 4 bytes after 16 bytes from the index of the found sequence
-        echo             target_index = index + len^(sequence^) + 16
-        echo             v0_bytes = data[target_index:target_index + 4]
-        echo.
-        echo             # If there is a line of 00, it changes to the line after where the sequence is
-        echo             if v0_bytes ^== b'\x00\x00\x00\x00':
-        echo                 target_index = index + len^(sequence^) + 32
-        echo                 v0_bytes = data[target_index:target_index + 4]
-        echo.
-        echo             if len^(v0_bytes^) ^< 4:
-        echo                 print^("Not enough data after the sequence."^)
-        echo                 break
-        echo.
-        echo             # Fallback if the volume isn't found
-        echo             if v0_bytes ^== b'\x00\x00\x00\x00':
-        echo                 print^("The data found after the sequence is wrong."^)
-        echo                 break
-        echo.
-        echo             # Create the maximum value
-        echo             new_v0_bytes = b'\xFF\xFF\x7F\x7F'
-        echo             print^(f"New value in big endian: {new_v0_bytes}"^)
-        echo.
-        echo             # Replace the value in the file
-        echo             f.seek^(target_index^)
-        echo             f.write^(new_v0_bytes^)
-        echo.
-        echo             # Update the offset to continue searching after the current position
-        echo             offset = target_index + 4
-        echo.
-        echo         print^("Update completed."^)
-        echo.
-        echo if __name__ ^== "__main__":
-        echo     parser = argparse.ArgumentParser^(description='Process a binary file.'^)
-        echo     parser.add_argument^('filename', type=str, help='Name of the file to process'^)
-        echo.
-        echo     args = parser.parse_args^(^)
-        echo     process_file^(args.filename^)
-    ) > XtremHexEditVolumeToMax.py
-)
-if %extreme%==1 (
-	for /D %%f in (output/*) do (
-		for %%s in ("output/%%f/*.scd") do (
-			echo Editing %%f\%%s
-			XtremHexEditVolumeToMax.py output\%%f\%%s
-		)
-	)
-) else (
-	for /D %%f in (output/*) do (
-		for %%s in ("output/%%f/*.scd") do (
-			echo Editing %%f\%%s
-			HexEditVolumeToMax.py output\%%f\%%s
-		)
+for /D %%f in (output/*) do (
+	for %%s in ("output/%%f/*.scd") do (
+		echo Editing %%f\%%s
+		HexEditVolumeToMax.py output\%%f\%%s
 	)
 )
 echo Every files is now hex edited to be the highest possible volume, the volume cannot be higher without clipping!
