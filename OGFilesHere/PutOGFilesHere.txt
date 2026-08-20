@@ -1129,10 +1129,6 @@ ew_015.vset\ew02a3sr.wav
 ew_015.vset\ew02a3sr.win32.scd
 ew_015.vset\ew02a4sr.wav
 ew_015.vset\ew02a4sr.win32.scd
-ew_015.vset\ew02a5do.wav
-ew_015.vset\ew02a5do.win32.scd
-ew_015.vset\ew02a6go.wav
-ew_015.vset\ew02a6go.win32.scd
 ew_015.vset\ew02a7do.wav
 ew_015.vset\ew02a7do.win32.scd
 ew_015.vset\ew02a8go.wav
@@ -1309,8 +1305,6 @@ he_020.vset\he2101ph.wav
 he_020.vset\he2101ph.win32.scd
 he_022.vset\he2201ph.wav
 he_022.vset\he2201ph.win32.scd
-he_022.vset\he2202hc.wav
-he_022.vset\he2202hc.win32.scd
 he_022.vset\he2203do.wav
 he_022.vset\he2203do.win32.scd
 he_022.vset\he2204ph.wav
