@@ -176,7 +176,7 @@ rmdir /Q /S input
 
 REM Third action: Edit every files in hexadecimal to maximise the volume
 if not exist "HexEditVolumeToMax.py" (
-	echo HexEditVolumeToMax.py is needed download again on github.com/Fotia13/Tools-To-Make-Voices-Patch-for-KH1PC/releases
+	echo HexEditVolumeToMax.py is needed download again on github.com/Fotia13/Tools-To-Make-Voices-Patch-for-KH1PC
 	echo You can put it in the folder now without running this script again!
 	pause
 	if not exist "HexEditVolumeToMax.py" (
