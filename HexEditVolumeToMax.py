@@ -10,9 +10,11 @@
 # Retrieved 2026-08-23, License - CC BY-SA 3.0
 # https://www.reddit.com/r/Python/comments/esvpv/how_do_you_display_and_edit_a_bin_file_using_hex/
 # https://blog.bandinelli.net/index.php?post/2016/10/23/Python-to-look-for-hexadecimal-patterns-in-a-file
+# https://www.geeksforgeeks.org/python/convert-hex-string-to-float-in-python/
 
 import argparse
 import re
+import struct
 
 if __name__ == '__main__':
     # This takes the file given in the argument
@@ -41,6 +43,6 @@ if __name__ == '__main__':
                     continue
 
             # Finally replace the volume by 00 00 80 3F
-            print(f"Replacing the volume {SupposedVolumeHex}")
+            print(f"Replacing the volume {struct.unpack('<f', SupposedVolumeHex)[0]}")
             f.seek(SupposedVolumeAddress)
             f.write(b'\x00\x00\x80\x3F')
